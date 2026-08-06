@@ -1,0 +1,14 @@
+# Normalise line endings so the repo behaves the same on Windows/macOS/Linux.
+* text=auto eol=lf
+
+# Shell scripts and SQL must stay LF (the backend container runs them).
+*.sh text eol=lf
+*.sql text eol=lf
+
+# Treat these as binary (never touch line endings / diffs).
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.xlsx binary
+*.docx binary
+*.pdf binary

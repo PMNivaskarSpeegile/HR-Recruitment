@@ -1,0 +1,16 @@
+# Keep the image small and free of local-only / secret files.
+backend_env/
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+.env
+logs/
+*.log
+uploads/
+staticfiles/
+.git/
+.vscode/

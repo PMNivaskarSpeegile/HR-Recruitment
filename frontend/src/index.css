@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  ATS Design System — color tokens.
+  Values are HSL triplets so Tailwind opacity modifiers (e.g. bg-primary/10) work.
+  Hex equivalents are noted for reference; do NOT introduce colors outside this file.
+*/
+@layer base {
+  :root {
+    --background: 210 40% 98%;          /* #F8FAFC page background        */
+    --foreground: 222 47% 11%;          /* #0F172A text primary           */
+
+    --card: 0 0% 100%;                  /* #FFFFFF surface                */
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 221 83% 53%;             /* #2563EB brand primary          */
+    --primary-foreground: 0 0% 100%;
+    --primary-dark: 226 71% 40%;        /* #1E40AF brand secondary        */
+
+    --secondary: 210 40% 96%;           /* neutral secondary surface      */
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;    /* #475569-ish text secondary     */
+    --accent: 210 40% 96%;              /* neutral hover                  */
+    --accent-foreground: 222 47% 11%;
+
+    --teal: 173 80% 40%;                /* #14B8A6 accent                 */
+    --teal-foreground: 0 0% 100%;
+    --success: 142 76% 36%;             /* #16A34A                        */
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;              /* #F59E0B                        */
+    --warning-foreground: 222 47% 11%;
+    --destructive: 0 72% 51%;           /* #DC2626 danger                 */
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 32% 91%;              /* #E2E8F0                        */
+    --input: 214 32% 91%;
+    --ring: 221 83% 53%;                /* focus ring = primary           */
+    --radius: 0.5rem;
+
+    /* Dark left sidebar */
+    --sidebar: 222 47% 11%;             /* #0F172A                        */
+    --sidebar-foreground: 210 40% 96%;
+    --sidebar-muted: 215 20% 65%;       /* #94A3B8                        */
+    --sidebar-active: 221 83% 53%;
+    --sidebar-border: 217 33% 17%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-feature-settings: "cv11", "ss01";
+  }
+}

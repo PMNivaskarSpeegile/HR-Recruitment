@@ -1,0 +1,68 @@
+# ── Speegile ATS — full stack (Postgres + Django API + React/nginx) ─────────
+# Quick start:
+#   1. cp .env.example .env   (edit SECRET_KEY / DB_PASSWORD)
+#   2. docker compose up --build
+#   3. docker compose exec backend python manage.py seed_demo   # one-time: users + demo data
+#   4. open http://localhost:8080
+#
+# The db container loads the schema + reference data from database/*.sql on its
+# FIRST start (empty volume). seed_demo then adds the login users and demo rows.
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${DB_NAME:-ats_db}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Loaded alphabetically on first init: schema first, then reference data.
+      # Long-form bind syntax so the spaces in the source filenames are safe.
+      - type: bind
+        source: "./database/ats db schema.sql"
+        target: /docker-entrypoint-initdb.d/01_schema.sql
+        read_only: true
+      - type: bind
+        source: "./database/ats insert data 2.sql"
+        target: /docker-entrypoint-initdb.d/02_reference_data.sql
+        read_only: true
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-ats_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: ./backend
+    environment:
+      SECRET_KEY: ${SECRET_KEY:-dev-insecure-change-me}
+      DEBUG: ${DEBUG:-False}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,backend}
+      DB_NAME: ${DB_NAME:-ats_db}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_SCHEMA: ats,public
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:8080,http://127.0.0.1:8080}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE_URL: /api
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
+
+volumes:
+  pgdata:
