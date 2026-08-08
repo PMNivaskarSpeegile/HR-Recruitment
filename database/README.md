@@ -6,7 +6,7 @@ so **SQL is the source of truth**, not Django migrations. `manage.py migrate` do
 
 | File | Purpose |
 |------|---------|
-| **`ats db schema.sql`** | The **complete current schema** for a fresh database (schema `ats`: 31 tables + all columns, PKs, FKs, checks, unique constraints, indexes, sequences/defaults). Generated from the live DB; equal to the base schema + every `migrations/*.sql` applied. |
+| **`ats db schema.sql`** | The **complete current schema** for a fresh database (schema `ats`: 34 tables + all columns, PKs, FKs, checks, unique constraints, indexes, sequences/defaults). Generated from the live DB; equal to the base schema + every `migrations/*.sql` applied. |
 | **`ats insert data 2.sql`** | The **official reference/master (lookup) data seed** — roles, requirement/candidate/application/position statuses, priorities, notice periods, req types, work modes, sources, screening modes, rejection reasons, and the JD email template. Lookup data only; **no** transactional/demo rows. Idempotent (`ON CONFLICT DO NOTHING`). |
 | **`migrations/*.sql`** | **Numbered, ordered** incremental changes for **evolving an existing** database (see `migrations/README.md`). A fresh DB from `ats db schema.sql` already contains all of these — do **not** replay them. |
 
@@ -121,7 +121,7 @@ cd ../backend && python check_schema_drift.py
 
 Compares every `managed = False` model against the live database and reports missing
 tables/columns, type mismatches, missing FKs, and missing indexes. Expected output:
-**NO DRIFT** (31 models match 31 tables).
+**NO DRIFT** (models match all 34 tables).
 
 ---
 

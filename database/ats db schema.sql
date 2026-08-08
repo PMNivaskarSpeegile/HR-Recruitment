@@ -4,7 +4,7 @@
 -- SOURCE OF TRUTH for a fresh database. Generated from the live ats_db via
 --   pg_dump --schema-only -n ats --no-owner --no-privileges
 -- which reflects the base schema plus every database/migrations/*.sql applied
--- (through 0019_candidate_profile_verification.sql).
+-- (through 0030_backfill_mapping_screening.sql — the latest migration).
 --
 -- The Django models are managed=False and mirror THIS schema (see backend/
 -- admin_module/models.py). Django never creates/alters these tables.
