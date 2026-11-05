@@ -33,7 +33,7 @@ services:
       timeout: 5s
       retries: 12
     ports:
-      - "5432:5432"
+      - "5434:5432"
 
   backend:
     build: ./backend

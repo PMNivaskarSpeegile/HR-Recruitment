@@ -123,19 +123,19 @@ class RequirementReadSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def get_client_mgr_name(self, obj):
-        return obj.client_mgr.manager_name if obj.client_mgr_id else None
+        return obj.client_mgr.manager_name if obj.client_mgr_id is not None else None
 
     def get_hiring_mgr_name(self, obj):
-        return obj.hiring_mgr.full_name if obj.hiring_mgr_id else None
+        return obj.hiring_mgr.full_name if obj.hiring_mgr_id is not None else None
 
     def get_recruiter_name(self, obj):
-        return obj.recruiter.full_name if obj.recruiter_id else None
+        return obj.recruiter.full_name if obj.recruiter_id is not None else None
 
     def get_location_name(self, obj):
-        return f"{obj.location.city}, {obj.location.state}" if obj.location_id else None
+        return f"{obj.location.city}, {obj.location.state}" if obj.location_id is not None else None
 
     def get_priority_name(self, obj):
-        return obj.priority.priority_name if obj.priority_id else None
+        return obj.priority.priority_name if obj.priority_id is not None else None
 
     def get_skill_names(self, obj):
         return [s.skill_name for s in (obj.skill1, obj.skill2, obj.skill3) if s]
@@ -149,7 +149,7 @@ class RequirementReadSerializer(serializers.ModelSerializer):
         return obj.target_fill_date if requirement_is_expired(obj) else None
 
     def get_recruitment_ended_by_name(self, obj):
-        return obj.recruitment_ended_by.full_name if obj.recruitment_ended_by_id else None
+        return obj.recruitment_ended_by.full_name if obj.recruitment_ended_by_id is not None else None
 
     def get_active_application_count(self, obj):
         val = getattr(obj, "active_application_count", None)
@@ -170,7 +170,7 @@ class RequirementReadSerializer(serializers.ModelSerializer):
         }
         for seat in obj.requirementposition_set.all():
             counts["total"] += 1
-            code = seat.position_status.status_code if seat.position_status_id else PositionStatus.OPEN
+            code = seat.position_status.status_code if seat.position_status_id is not None else PositionStatus.OPEN
             key = by_code.get(code)
             if key:
                 counts[key] += 1

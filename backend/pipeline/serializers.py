@@ -100,25 +100,25 @@ class JdCvMappingSerializer(serializers.ModelSerializer):
         ]
 
     def get_application_stage_name(self, obj):
-        return obj.application_stage.status_name if obj.application_stage_id else None
+        return obj.application_stage.status_name if obj.application_stage_id is not None else None
 
     def get_application_stage_code(self, obj):
-        return obj.application_stage.status_code if obj.application_stage_id else None
+        return obj.application_stage.status_code if obj.application_stage_id is not None else None
 
     def get_latest_outcome_name(self, obj):
-        return obj.latest_outcome.status_name if obj.latest_outcome_id else None
+        return obj.latest_outcome.status_name if obj.latest_outcome_id is not None else None
 
     def get_latest_outcome_code(self, obj):
-        return obj.latest_outcome.status_code if obj.latest_outcome_id else None
+        return obj.latest_outcome.status_code if obj.latest_outcome_id is not None else None
 
     def get_recruiter_name(self, obj):
-        return obj.req.recruiter.full_name if obj.req_id and obj.req.recruiter_id else None
+        return obj.req.recruiter.full_name if obj.req_id is not None and obj.req.recruiter_id is not None else None
 
     def get_screening_mode_name(self, obj):
-        return obj.screening_mode.mode_name if obj.screening_mode_id else None
+        return obj.screening_mode.mode_name if obj.screening_mode_id is not None else None
 
     def get_rejection_reason_name(self, obj):
-        return obj.rejection_reason.reason_name if obj.rejection_reason_id else None
+        return obj.rejection_reason.reason_name if obj.rejection_reason_id is not None else None
 
 
 class OutcomeInputSerializer(serializers.Serializer):

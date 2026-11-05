@@ -135,25 +135,25 @@ class CandidateReadSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def get_candidate_status_name(self, obj):
-        return obj.candidate_status.status_name if obj.candidate_status_id else None
+        return obj.candidate_status.status_name if obj.candidate_status_id is not None else None
 
     def get_candidate_status_code(self, obj):
-        return obj.candidate_status.status_code if obj.candidate_status_id else None
+        return obj.candidate_status.status_code if obj.candidate_status_id is not None else None
 
     def get_current_location_name(self, obj):
-        return f"{obj.current_location.city}, {obj.current_location.state}" if obj.current_location_id else None
+        return f"{obj.current_location.city}, {obj.current_location.state}" if obj.current_location_id is not None else None
 
     def get_notice_period_name(self, obj):
-        return obj.notice_period.np_name if obj.notice_period_id else None
+        return obj.notice_period.np_name if obj.notice_period_id is not None else None
 
     def get_work_mode_name(self, obj):
-        return obj.work_mode.work_mode_name if obj.work_mode_id else None
+        return obj.work_mode.work_mode_name if obj.work_mode_id is not None else None
 
     def get_source_name(self, obj):
-        return obj.source.source_name if obj.source_id else None
+        return obj.source.source_name if obj.source_id is not None else None
 
     def get_uploaded_by_name(self, obj):
-        return obj.uploaded_by.full_name if obj.uploaded_by_id else None
+        return obj.uploaded_by.full_name if obj.uploaded_by_id is not None else None
 
     def get_skill_names(self, obj):
         # Uses prefetched candidateskill_set to avoid N+1 (see viewset queryset).
@@ -163,7 +163,7 @@ class CandidateReadSerializer(serializers.ModelSerializer):
         return [cs.skill_id for cs in obj.candidateskill_set.all()]
 
     def get_profile_verified_by_name(self, obj):
-        return obj.profile_verified_by.full_name if obj.profile_verified_by_id else None
+        return obj.profile_verified_by.full_name if obj.profile_verified_by_id is not None else None
 
 
 class DuplicateReviewSerializer(serializers.ModelSerializer):
@@ -190,15 +190,15 @@ class DuplicateReviewSerializer(serializers.ModelSerializer):
         return {
             "cv_id": c.cv_id, "cv_serial": c.cv_serial, "candidate_name": c.candidate_name,
             "mobile": c.mobile, "email": c.email, "current_company": c.current_company,
-            "candidate_status_name": c.candidate_status.status_name if c.candidate_status_id else None,
-            "candidate_status_code": c.candidate_status.status_code if c.candidate_status_id else None,
+            "candidate_status_name": c.candidate_status.status_name if c.candidate_status_id is not None else None,
+            "candidate_status_code": c.candidate_status.status_code if c.candidate_status_id is not None else None,
         }
 
     def get_created_by_name(self, obj):
-        return obj.created_by.full_name if obj.created_by_id else None
+        return obj.created_by.full_name if obj.created_by_id is not None else None
 
     def get_resolved_by_name(self, obj):
-        return obj.resolved_by.full_name if obj.resolved_by_id else None
+        return obj.resolved_by.full_name if obj.resolved_by_id is not None else None
 
 
 class DuplicateReviewCreateSerializer(serializers.ModelSerializer):

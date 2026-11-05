@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Plus, Upload, History, MapPin } from "lucide-react";
 import { useAuth } from "@/auth/AuthContext";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -34,8 +34,15 @@ export default function CandidatesPage() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const debouncedSearch = useDebounced(search.trim(), 300);
-  // Any filter/search change → back to page 1.
-  useEffect(() => setPage(1), [statusFilter, reqFilter, debouncedSearch, skillIds]);
+  // Any filter/search change → back to page 1. Computed during render (React's
+  // recommended "adjusting state when a prop changes" pattern) instead of a
+  // useEffect, so this doesn't cause an extra cascading render.
+  const filterKey = `${statusFilter}|${reqFilter}|${debouncedSearch}|${skillIds.join(",")}`;
+  const [prevFilterKey, setPrevFilterKey] = useState(filterKey);
+  if (filterKey !== prevFilterKey) {
+    setPrevFilterKey(filterKey);
+    setPage(1);
+  }
 
   const { data, isLoading, isError } = useCandidates(
     statusFilter === "ACTIVE" ? undefined : statusFilter,
@@ -49,6 +56,10 @@ export default function CandidatesPage() {
   const [historyOpen, setHistoryOpen] = useState(false);
   const [unmappedOpen, setUnmappedOpen] = useState(false);
   const [selected, setSelected] = useState<Candidate | null>(null);
+  // Editing an existing candidate reuses the same Add Candidate form/dialog,
+  // pre-populated with this candidate's data (Administrator/Recruiter only —
+  // the Edit action itself is only rendered for `canManage`).
+  const [editingCandidate, setEditingCandidate] = useState<Candidate | null>(null);
 
   const rows = data?.results ?? [];
   const total = data?.count ?? 0;
@@ -63,8 +74,8 @@ export default function CandidatesPage() {
         </p>
       )}
 
-      <DataTable
-        columns={candidateColumns}
+      <DataTable<Candidate, unknown>
+        columns={candidateColumns(canManage ? { onEdit: (c) => setEditingCandidate(c) } : undefined)}
         data={rows}
         isLoading={isLoading}
         searchPlaceholder="Search by name, mobile, email or location…"
@@ -147,7 +158,18 @@ export default function CandidatesPage() {
         }
       />
 
-      {canManage && <CandidateFormDialog open={addOpen} onOpenChange={setAddOpen} />}
+      {canManage && (
+        <CandidateFormDialog
+          open={addOpen || editingCandidate !== null}
+          onOpenChange={(o) => {
+            if (!o) {
+              setAddOpen(false);
+              setEditingCandidate(null);
+            }
+          }}
+          candidate={editingCandidate}
+        />
+      )}
       {canManage && <BulkUploadDialog open={uploadOpen} onOpenChange={setUploadOpen} />}
       {canManage && <ImportHistoryDialog open={historyOpen} onOpenChange={setHistoryOpen} />}
       {canManage && <UnmappedLocationsDialog open={unmappedOpen} onOpenChange={setUnmappedOpen} />}

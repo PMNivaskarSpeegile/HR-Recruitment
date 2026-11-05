@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ComponentType, ReactNode } from "react";
-import { AlertCircle, Briefcase, ChevronRight, Clock, ShieldCheck, Tag } from "lucide-react";
+import { AlertCircle, Briefcase, ChevronRight, Clock, FileText, ShieldCheck, Tag } from "lucide-react";
 import { toast } from "sonner";
 import {
   Sheet,
@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import { candidateStatusLabel, candidateStatusVariant, statusVariant } from "@/lib/status";
 import { fmtDate, fmtDateTime } from "@/lib/format";
 import { useCandidateDetail, useClearCandidateStatus, useUntagRequirement } from "./api";
+import { CandidateFormDialog } from "./CandidateFormDialog";
 import { TagToRequirementDialog } from "./TagToRequirementDialog";
 import type { Candidate, RequirementHistoryItem, TimelineEvent } from "./types";
 
@@ -163,6 +164,10 @@ export function CandidateDrawer({ candidate, onClose }: { candidate: Candidate |
   const clearStatus = useClearCandidateStatus();
   const untagReq = useUntagRequirement();
   const [tagOpen, setTagOpen] = useState(false);
+  // Read-only "view as form" — reopens the Add Candidate form's exact layout,
+  // pre-filled and fully disabled, for a quick at-a-glance profile view.
+  // Editing only ever happens via the Edit action in the candidate list.
+  const [viewFormOpen, setViewFormOpen] = useState(false);
   const activeReviews = data?.active_reviews ?? [];
   // A candidate can't be re-added to a requirement they're already under review
   // for (active review) OR already in the pipeline for (mapping).
@@ -288,7 +293,7 @@ export function CandidateDrawer({ candidate, onClose }: { candidate: Candidate |
                                 { id, requirement: rv.req_id },
                                 {
                                   onSuccess: () => toast.success(`Removed from ${rv.req_tracker_no}'s review pool.`),
-                                  onError: (e: any) =>
+                                  onError: (e: unknown) =>
                                     toast.error(apiErrorMessage(e, "Could not remove from the review pool.")),
                                 },
                               )
@@ -331,6 +336,9 @@ export function CandidateDrawer({ candidate, onClose }: { candidate: Candidate |
               <Tag className="h-4 w-4" /> Add to Review Pool
             </Button>
           )}
+          <Button variant="outline" size="sm" onClick={() => setViewFormOpen(true)} disabled={id == null}>
+            <FileText className="h-4 w-4" /> View as form
+          </Button>
           <SheetClose asChild>
             <Button variant="ghost" size="sm" className="ml-auto">
               Close
@@ -344,6 +352,13 @@ export function CandidateDrawer({ candidate, onClose }: { candidate: Candidate |
         alreadyTaggedReqIds={taggedReqIds}
         open={tagOpen}
         onOpenChange={setTagOpen}
+      />
+
+      <CandidateFormDialog
+        open={viewFormOpen}
+        onOpenChange={setViewFormOpen}
+        candidate={data?.candidate ?? candidate}
+        readOnly
       />
     </Sheet>
   );

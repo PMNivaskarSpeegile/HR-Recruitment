@@ -42,3 +42,7 @@ frontend/build/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Real candidate data exports - never commit
+docs/291_React Native Developer_*.xlsx
+docs/duplicate validation.xlsx
